@@ -495,13 +495,27 @@ function GalleryPage() {
         <div className="gallery-grid">
           {business.gallery.map((item) => (
             <figure className="gallery-item" key={item.title}>
-              <img src={item.image} alt={item.alt} />
+              <img
+                src={item.image}
+                alt={item.alt}
+                loading="lazy"
+                width={item.width}
+                height={item.height}
+                style={{ objectPosition: item.position }}
+              />
               <figcaption>
                 <span className="gallery-item__index">{String(business.gallery.indexOf(item) + 1).padStart(2, '0')}</span>
                 <strong>{item.title}</strong>
               </figcaption>
             </figure>
           ))}
+        </div>
+        <div className="gallery-support">
+          <img src="/media/lab/interior/le-lab-interior.jpg" alt="Espace coiffure et manucure à l intérieur de Casa Beauty Lab" loading="lazy" width="1200" height="800" />
+          <div>
+            <p className="eyebrow">Le lieu</p>
+            <h2>Un espace pensé pour prendre son temps.</h2>
+          </div>
         </div>
       </div>
     </section>

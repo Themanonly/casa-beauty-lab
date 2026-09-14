@@ -36,6 +36,9 @@ export type GalleryItem = {
   title: string;
   image: string;
   alt: string;
+  position?: string;
+  width?: number;
+  height?: number;
 };
 
 export type Review = {
@@ -192,10 +195,12 @@ export const business: BusinessInfo = {
     },
   ],
   gallery: [
-    { title: 'Beauté du regard', image: '/media/gallery/casabeauty.lab_1786104912_3958456601414990297_77861053860.jpg', alt: 'Résultat beauté du regard avec cils et sourcils travaillés' },
-    { title: 'Détail beauté', image: '/media/gallery/kao_benjelloun_1787239613_3967973886086172052_1455228097.jpg', alt: 'Détail beauté réalisé à Casa Beauty Lab' },
-    { title: 'Onglerie éditoriale', image: '/media/gallery/kao_benjelloun_1789396357_3986067802333243868_1455228097.jpg', alt: 'Manucure élégante réalisée au salon' },
-    { title: 'Détail des mains', image: '/media/gallery/kao_benjelloun_1789396357_3986067801964024424_1455228097.jpg', alt: 'Détail éditorial des mains et des ongles' },
+    { title: 'Coiffure signature', image: '/media/lab/coiffure/coiffure-signature.png', alt: 'Résultat balayage visible dans un espace du salon', position: 'center 58%', width: 1200, height: 700 },
+    { title: 'Massage & détente', image: '/media/lab/massage/massage-detente.png', alt: 'Soin du visage réalisé dans une atmosphère calme', position: 'center 48%', width: 1200, height: 700 },
+    { title: 'Hammam ritual', image: '/media/lab/hammam/hammam-ritual.png', alt: 'Rituel de soin aux bougies dans un espace bien-être', position: 'center 47%', width: 1200, height: 700 },
+    { title: 'Lissage & soin', image: '/media/lab/lissage/lissage-soin.jpg', alt: 'Espace shampoing et soin capillaire de Casa Beauty Lab', position: 'center 52%', width: 1200, height: 700 },
+    { title: 'Beauté visuelle', image: '/media/lab/beaute/beaute-visuelle.jpg', alt: 'Résultat beauté du regard avec cils et sourcils travaillés', position: 'center 44%', width: 1359, height: 1593 },
+    { title: 'Le lab', image: '/media/lab/interior/le-lab.jpg', alt: 'Arche en marbre illuminée avec le nom Casa Beauty Lab', position: 'center center', width: 1200, height: 1600 },
   ],
   reviews: [],
 };
