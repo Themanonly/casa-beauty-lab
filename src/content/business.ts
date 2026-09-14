@@ -195,12 +195,12 @@ export const business: BusinessInfo = {
     },
   ],
   gallery: [
-    { title: 'Coiffure signature', image: '/media/lab/coiffure/coiffure-signature.png', alt: 'Résultat balayage visible dans un espace du salon', position: 'center 58%', width: 1200, height: 700 },
-    { title: 'Massage & détente', image: '/media/lab/massage/massage-detente.png', alt: 'Soin du visage réalisé dans une atmosphère calme', position: 'center 48%', width: 1200, height: 700 },
-    { title: 'Hammam ritual', image: '/media/lab/hammam/hammam-ritual.png', alt: 'Rituel de soin aux bougies dans un espace bien-être', position: 'center 47%', width: 1200, height: 700 },
-    { title: 'Lissage & soin', image: '/media/lab/lissage/lissage-soin.jpg', alt: 'Espace shampoing et soin capillaire de Casa Beauty Lab', position: 'center 52%', width: 1200, height: 700 },
-    { title: 'Beauté visuelle', image: '/media/lab/beaute/beaute-visuelle.jpg', alt: 'Résultat beauté du regard avec cils et sourcils travaillés', position: 'center 44%', width: 1359, height: 1593 },
-    { title: 'Le lab', image: '/media/lab/interior/le-lab.jpg', alt: 'Arche en marbre illuminée avec le nom Casa Beauty Lab', position: 'center center', width: 1200, height: 1600 },
+    { title: 'Coiffure signature', image: '/media/lab/coiffure/coiffure-signature-13s.png', alt: 'Résultat balayage visible dans un espace du salon', position: 'center 58%', width: 1200, height: 700 },
+    { title: 'Massage & détente', image: '/media/lab/hammam/hammam-ritual.png', alt: 'Rituel de soin aux bougies dans un espace bien-être', position: 'center 47%', width: 1200, height: 700 },
+    { title: 'Hammam ritual', image: '/media/lab/hammam/hammam-ritual-new-5s.png', alt: 'Traitement réalisé dans un espace hammam Casa Beauty Lab', position: 'center 54%', width: 1200, height: 700 },
+    { title: 'Lissage & soin', image: '/media/lab/massage/massage-detente.png', alt: 'Soin réalisé dans une atmosphère calme', position: 'center 48%', width: 1200, height: 700 },
+    { title: 'Beauté visuelle', image: '/media/lab/beaute/beaute-visuelle-reorder.jpg', alt: 'Détail beauté réalisé à Casa Beauty Lab', position: 'center 48%', width: 1359, height: 1593 },
+    { title: 'Le lab', image: '/media/lab/lissage/lissage-soin.jpg', alt: 'Espace shampoing et soin capillaire de Casa Beauty Lab', position: 'center 52%', width: 1200, height: 700 },
   ],
   reviews: [],
 };
