@@ -1,8 +1,37 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, Route, Routes } from 'react-router-dom';
 import { business } from './content/business';
 
 const featuredServices = business.services.filter((service) => service.featured);
+
+const heroScenes = [
+  {
+    id: 'coiffure',
+    label: 'Coiffure',
+    type: 'video' as const,
+    src: '/media/hero/coiffure/balayage-result.mp4',
+    alt: 'Résultat balayage réalisé au salon Casa Beauty Lab',
+    position: 'center 58%',
+    startAt: 7.2,
+  },
+  {
+    id: 'spa',
+    label: 'Spa & Hammam',
+    type: 'video' as const,
+    src: '/media/hero/spa/massage-candlelight.mp4',
+    alt: 'Massage dans l espace spa de Casa Beauty Lab',
+    position: 'center center',
+    startAt: 10,
+  },
+  {
+    id: 'beaute',
+    label: 'Beauté',
+    type: 'image' as const,
+    src: '/media/hero/beaute/lashes.jpg',
+    alt: 'Détail de cils et sourcil travaillé',
+    position: 'center 46%',
+  },
+];
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -129,12 +158,7 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="hero-visual" aria-label="Maison de beauté Casa Beauty Lab">
-            <div className="hero-visual__frame">
-              <span className="visual-kicker">Casa Beauty Lab</span>
-              <strong>Un espace dédié au soin.</strong>
-            </div>
-          </div>
+          <HeroMedia />
         </div>
       </section>
 
@@ -228,6 +252,102 @@ function HomePage() {
         </div>
       </section>
     </>
+  );
+}
+
+function HeroMedia() {
+  const [activeScene, setActiveScene] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const videoRefs = useRef<Array<HTMLVideoElement | null>>([]);
+
+  useEffect(() => {
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updateMotion = () => setReducedMotion(motionQuery.matches);
+    updateMotion();
+    motionQuery.addEventListener('change', updateMotion);
+    return () => motionQuery.removeEventListener('change', updateMotion);
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion || isPaused) return undefined;
+    const timer = window.setInterval(() => {
+      setActiveScene((scene) => (scene + 1) % heroScenes.length);
+    }, 5600);
+    return () => window.clearInterval(timer);
+  }, [isPaused, reducedMotion]);
+
+  useEffect(() => {
+    videoRefs.current.forEach((video, index) => {
+      if (!video) return;
+      if (index === activeScene && !reducedMotion && !isPaused) {
+        void video.play().catch(() => undefined);
+      } else {
+        video.pause();
+      }
+    });
+  }, [activeScene, isPaused, reducedMotion]);
+
+  useEffect(() => {
+    const handleVisibility = () => setIsPaused(document.hidden);
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, []);
+
+  const selectScene = (index: number) => {
+    setActiveScene(index);
+    setIsPaused(false);
+  };
+
+  return (
+    <div
+      className={`hero-visual${reducedMotion ? ' hero-visual--reduced' : ''}`}
+      aria-label="Sélection éditoriale Casa Beauty Lab"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocus={() => setIsPaused(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setIsPaused(false);
+      }}
+    >
+      <div className="hero-scenes" aria-live="polite">
+        {heroScenes.map((scene, index) => (
+          <div className={`hero-scene${index === activeScene ? ' hero-scene--active' : ''}`} key={scene.id}>
+            {scene.type === 'video' ? (
+              <video
+                ref={(video) => { videoRefs.current[index] = video; }}
+                src={scene.src}
+                muted
+                playsInline
+                preload={index === activeScene ? 'auto' : 'none'}
+                aria-label={scene.alt}
+                onLoadedMetadata={(event) => { event.currentTarget.currentTime = scene.startAt; }}
+                onEnded={(event) => { event.currentTarget.currentTime = scene.startAt; void event.currentTarget.play().catch(() => undefined); }}
+              />
+            ) : (
+              <img src={scene.src} alt={scene.alt} style={{ objectPosition: scene.position }} />
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="hero-visual__shade" />
+      <div className="hero-scene-selector" role="tablist" aria-label="Choisir une ambiance">
+        {heroScenes.map((scene, index) => (
+          <button
+            className={`hero-scene-tab${index === activeScene ? ' hero-scene-tab--active' : ''}`}
+            type="button"
+            role="tab"
+            aria-selected={index === activeScene}
+            aria-label={`Afficher la scène ${scene.label}`}
+            onClick={() => selectScene(index)}
+            key={scene.id}
+          >
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <strong>{scene.label}</strong>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -375,6 +495,7 @@ function GalleryPage() {
         <div className="gallery-grid">
           {business.gallery.map((item) => (
             <figure className="gallery-item" key={item.title}>
+              <img src={item.image} alt={item.alt} />
               <figcaption>
                 <span className="gallery-item__index">{String(business.gallery.indexOf(item) + 1).padStart(2, '0')}</span>
                 <strong>{item.title}</strong>

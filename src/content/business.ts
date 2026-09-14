@@ -192,12 +192,10 @@ export const business: BusinessInfo = {
     },
   ],
   gallery: [
-    { title: 'Coiffure signature', image: 'linear-gradient(135deg, #111 0%, #505050 35%, #dedede 100%)', alt: 'Palette visuelle noir et blanc inspirée du salon' },
-    { title: 'Massage & détente', image: 'linear-gradient(135deg, #020202 0%, #3b3b3b 40%, #f3f3f3 100%)', alt: 'Palette visuelle spa noir et blanc' },
-    { title: 'Hammam ritual', image: 'linear-gradient(135deg, #161616 0%, #6f6f6f 42%, #f0f0f0 100%)', alt: 'Palette visuelle du hammam' },
-    { title: 'Lissage & soin', image: 'linear-gradient(135deg, #090909 0%, #4d4d4d 48%, #d7d7d7 100%)', alt: 'Palette visuelle des soins capillaires' },
-    { title: 'Beauté visuelle', image: 'linear-gradient(135deg, #0a0a0a 0%, #575757 36%, #ede9e9 100%)', alt: 'Palette beauté et esthétique' },
-    { title: 'Le lab', image: 'linear-gradient(135deg, #050505 0%, #2c2c2c 52%, #dbdbdb 100%)', alt: 'Palette de la signature Casa Beauty Lab' },
+    { title: 'Beauté du regard', image: '/media/gallery/casabeauty.lab_1786104912_3958456601414990297_77861053860.jpg', alt: 'Résultat beauté du regard avec cils et sourcils travaillés' },
+    { title: 'Détail beauté', image: '/media/gallery/kao_benjelloun_1787239613_3967973886086172052_1455228097.jpg', alt: 'Détail beauté réalisé à Casa Beauty Lab' },
+    { title: 'Onglerie éditoriale', image: '/media/gallery/kao_benjelloun_1789396357_3986067802333243868_1455228097.jpg', alt: 'Manucure élégante réalisée au salon' },
+    { title: 'Détail des mains', image: '/media/gallery/kao_benjelloun_1789396357_3986067801964024424_1455228097.jpg', alt: 'Détail éditorial des mains et des ongles' },
   ],
   reviews: [],
 };
