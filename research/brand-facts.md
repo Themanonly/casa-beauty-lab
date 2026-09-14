@@ -85,3 +85,15 @@
   - Source: public press mention in research brief, not fully verified here
   - Date checked: 2026-09-14
   - Notes: Only use with caution and only if it naturally fits; do not make it a core identity claim without stronger verification.
+
+- Fact: Public media candidates inspected but not locally used
+  - Status: INSPECTED / NOT USED
+  - Source: authenticated public Instagram profile @casabeauty.lab
+  - Date checked: 2026-09-14
+  - Notes: Candidate references included https://www.instagram.com/kao_benjelloun/reel/DXH8pgCDDvf/ (ombré / mèches), https://www.instagram.com/kao_benjelloun/reel/DTTlyiVjIO-/ (massage), https://www.instagram.com/kao_benjelloun/reel/DTGJotpDEN0/ (cils / sourcils), and https://www.instagram.com/casabeauty.lab/reel/DdE8qknIX7D/ (manucure). The existing browser exposed profile/reel chrome or an unsupported video stream rather than a clean downloadable source image, so no local media file was retained and no CDN URL was added to the site.
+
+- Fact: Hero and gallery media
+  - Status: UNRESOLVED / REQUIRES CLEAN ORIGINAL ASSET
+  - Source: public Instagram media inspection
+  - Date checked: 2026-09-14
+  - Notes: The site intentionally keeps a restrained art-direction hero field and text-led gallery until Casa Beauty Lab supplies clean original files or an accessible official media export.

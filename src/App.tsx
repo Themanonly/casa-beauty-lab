@@ -130,11 +130,9 @@ function HomePage() {
           </div>
 
           <div className="hero-visual" aria-label="Maison de beauté Casa Beauty Lab">
-            <div className="hero-visual__glow hero-visual__glow--one" />
-            <div className="hero-visual__glow hero-visual__glow--two" />
             <div className="hero-visual__frame">
               <span className="visual-kicker">Casa Beauty Lab</span>
-              <strong>Coiffure • Spa • Beauty</strong>
+              <strong>Un espace dédié au soin.</strong>
             </div>
           </div>
         </div>
@@ -377,8 +375,10 @@ function GalleryPage() {
         <div className="gallery-grid">
           {business.gallery.map((item) => (
             <figure className="gallery-item" key={item.title}>
-              <div className="gallery-item__image" style={{ background: item.image }} aria-label={item.alt} />
-              <figcaption>{item.title}</figcaption>
+              <figcaption>
+                <span className="gallery-item__index">{String(business.gallery.indexOf(item) + 1).padStart(2, '0')}</span>
+                <strong>{item.title}</strong>
+              </figcaption>
             </figure>
           ))}
         </div>
