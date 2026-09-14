@@ -29,6 +29,7 @@ export type Service = {
   duration?: string;
   image: string;
   featured?: boolean;
+  tariffLines?: { name: string; duration?: string; price: string }[];
 };
 
 export type GalleryItem = {
@@ -78,6 +79,12 @@ export const business: BusinessInfo = {
       duration: 'Selon longueur',
       image: 'linear-gradient(135deg, #121212 0%, #2d2d2d 42%, #8b8b8b 100%)',
       featured: true,
+      tariffLines: [
+        { name: 'Brushing', price: '70 DH' },
+        { name: 'Coupe', price: '200 DH' },
+        { name: 'Coloration', price: '350 DH' },
+        { name: 'Mèches / Balayage', price: 'Dès 800 DH' },
+      ],
     },
     {
       id: 'soins-cheveux',
@@ -90,18 +97,47 @@ export const business: BusinessInfo = {
       duration: '45–90 min',
       image: 'linear-gradient(135deg, #1d1d1d 0%, #444 46%, #c8c8c8 100%)',
       featured: true,
+      tariffLines: [
+        { name: 'Masque / Soin', price: 'Dès 250 DH' },
+        { name: 'Botox', price: 'Dès 380 DH' },
+        { name: 'Lissage / Protéine', price: 'Dès 800 DH' },
+      ],
     },
     {
-      id: 'massage-hammam',
-      title: 'Massage & Hammam',
-      slug: 'massage-hammam',
+      id: 'massage',
+      title: 'Massage',
+      slug: 'massage',
       category: 'Spa',
-      shortDescription: 'Relaxation, hammam et ritual profond.',
-      description: 'Un moment de détente pensé pour relâcher les tensions, régénérer le corps et offrir une sensation de bien-être durable.',
-      priceLabel: 'Oriental 45 min 150 DH · Royal 1h 190 DH · Signature 1h 250 DH · Enfant 30 min 90 DH',
-      duration: '30–90 min',
+      shortDescription: 'Relaxing, tonique, deep / sport et head massage.',
+      description: 'Massages publiés sur le tarif officiel, avec une durée et un prix indiqués lorsqu’ils sont disponibles.',
+      priceLabel: 'Relaxing 45 min 300 DH · Tonique 1 h 400 DH · Deep / Sport : tarif sur demande · Head massage : tarif sur demande',
+      duration: '45 min–1 h',
       image: 'linear-gradient(135deg, #090909 0%, #3a3a3a 48%, #f1f1f1 100%)',
       featured: true,
+      tariffLines: [
+        { name: 'Relaxing', duration: '45 min', price: '300 DH' },
+        { name: 'Tonique', duration: '1 h', price: '400 DH' },
+        { name: 'Deep / Sport', price: 'Tarif sur demande' },
+        { name: 'Head massage', price: 'Tarif sur demande' },
+      ],
+    },
+    {
+      id: 'hammam',
+      title: 'Hammam',
+      slug: 'hammam',
+      category: 'Spa',
+      shortDescription: 'Oriental, Royal, Signature et Enfant.',
+      description: 'Les formules hammam publiées par Casa Beauty Lab avec leurs durées et tarifs officiels.',
+      priceLabel: 'Oriental 45 min 150 DH · Royal 1 h 190 DH · Signature 1 h 250 DH · Enfant 30 min 90 DH',
+      duration: '30 min–1 h',
+      image: 'linear-gradient(135deg, #090909 0%, #3a3a3a 48%, #f1f1f1 100%)',
+      featured: false,
+      tariffLines: [
+        { name: 'Oriental', duration: '45 min', price: '150 DH' },
+        { name: 'Royal', duration: '1 h', price: '190 DH' },
+        { name: 'Signature', duration: '1 h', price: '250 DH' },
+        { name: 'Enfant', duration: '30 min', price: '90 DH' },
+      ],
     },
     {
       id: 'onglerie',
@@ -114,6 +150,11 @@ export const business: BusinessInfo = {
       duration: '30–60 min',
       image: 'linear-gradient(135deg, #101010 0%, #5f5f5f 55%, #efefef 100%)',
       featured: false,
+      tariffLines: [
+        { name: 'Manucure', price: 'Tarif sur demande' },
+        { name: 'Vernis permanent', price: 'Tarif sur demande' },
+        { name: 'Gel / Extensions', price: 'Tarif sur demande' },
+      ],
     },
     {
       id: 'esthetique',
@@ -126,6 +167,11 @@ export const business: BusinessInfo = {
       duration: '20–45 min',
       image: 'linear-gradient(135deg, #070707 0%, #2a2a2a 54%, #d7d7d7 100%)',
       featured: false,
+      tariffLines: [
+        { name: 'Sourcils', price: 'Tarif sur demande' },
+        { name: 'Duvet', price: 'Tarif sur demande' },
+        { name: 'Pack complet', price: 'Tarif sur demande' },
+      ],
     },
     {
       id: 'mariage',
@@ -138,6 +184,11 @@ export const business: BusinessInfo = {
       duration: 'Sur devis',
       image: 'linear-gradient(135deg, #171717 0%, #404040 52%, #eaeaea 100%)',
       featured: false,
+      tariffLines: [
+        { name: 'Coiffure de soirée', price: 'Tarif sur demande' },
+        { name: 'Maquillage', price: 'Tarif sur demande' },
+        { name: 'Pack mariée', price: 'Tarif sur demande' },
+      ],
     },
   ],
   gallery: [

@@ -1,9 +1,26 @@
-import { Link, Route, Routes } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, Route, Routes } from 'react-router-dom';
 import { business } from './content/business';
 
 const featuredServices = business.services.filter((service) => service.featured);
 
 function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.classList.toggle('menu-open', menuOpen);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.classList.remove('menu-open');
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [menuOpen]);
+
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -14,18 +31,22 @@ function App() {
             <span className="brand-mark brand-mark--script">lab</span>
           </Link>
 
-          <nav className="main-nav" aria-label="Navigation principale">
-            <Link to="/">Accueil</Link>
-            <Link to="/tarifs">Tarifs</Link>
-            <Link to="/spa">Spa</Link>
-            <Link to="/gallery">Le lab</Link>
-            <Link to="/about">À propos</Link>
-            <Link to="/contact">Contact</Link>
+          <nav className={`main-nav${menuOpen ? ' main-nav--open' : ''}`} aria-label="Navigation principale" id="main-navigation">
+            <NavLink to="/" end onClick={closeMenu}>Accueil</NavLink>
+            <NavLink to="/tarifs" onClick={closeMenu}>Tarifs</NavLink>
+            <NavLink to="/spa" onClick={closeMenu}>Spa</NavLink>
+            <NavLink to="/gallery" onClick={closeMenu}>Le lab</NavLink>
+            <NavLink to="/about" onClick={closeMenu}>À propos</NavLink>
+            <NavLink to="/contact" onClick={closeMenu}>Contact</NavLink>
           </nav>
 
           <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">
             Réserver
           </a>
+          <button className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="main-navigation" aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'} onClick={() => setMenuOpen((open) => !open)}>
+            <span />
+            <span />
+          </button>
         </div>
       </header>
 
@@ -53,11 +74,22 @@ function App() {
           </div>
 
           <div>
+            <h3>Visiter</h3>
+            <ul>
+              <li><Link to="/tarifs">Tarifs</Link></li>
+              <li><Link to="/spa">Spa</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
+              <li><a href={business.mapUrl} target="_blank" rel="noreferrer">Itinéraire</a></li>
+            </ul>
+          </div>
+
+          <div>
             <h3>Contact</h3>
             <ul>
               <li><a href={business.phoneHref}>{business.phoneDisplay}</a></li>
               <li><a href={business.whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a></li>
               <li><a href={business.instagramUrl} target="_blank" rel="noreferrer">Instagram</a></li>
+              <li><a href={business.mapUrl} target="_blank" rel="noreferrer">{business.address}</a></li>
             </ul>
           </div>
 
@@ -129,14 +161,14 @@ function HomePage() {
           <div className="service-grid">
             {featuredServices.map((service) => (
               <article className="service-card" key={service.id}>
-                <div className="service-card__image" style={{ background: service.image }} aria-hidden="true" />
                 <div className="service-body">
                   <span className="pill">{service.category}</span>
                   <h3>{service.title}</h3>
                   <p>{service.shortDescription}</p>
                   <div className="service-meta">
-                    <span>{service.priceLabel ?? 'Demander le tarif'}</span>
+                    <span>{service.priceLabel ?? 'Tarif sur demande'}</span>
                     <span>{service.duration ?? 'Sur devis'}</span>
+                    <Link to="/tarifs">Voir les tarifs</Link>
                   </div>
                 </div>
               </article>
@@ -147,7 +179,6 @@ function HomePage() {
 
       <section className="section-spacing editorial-band">
         <div className="container editorial-layout">
-          <div className="editorial-image" aria-hidden="true" />
           <div className="editorial-copy">
             <p className="eyebrow">Expertise beauté</p>
             <h2>Des soins pensés pour un résultat naturel et durable.</h2>
@@ -167,20 +198,23 @@ function HomePage() {
         <div className="container">
           <div className="section-heading">
             <p className="eyebrow">Expérience</p>
-            <h2>Un cadre soigné, accueillant et pensé pour le confort.</h2>
+            <h2>L’expérience Casa Beauty Lab.</h2>
           </div>
-          <div className="review-row">
+          <div className="review-row experience-grid">
             <div className="stat-box">
-              <span className="stat-box__value">C</span>
-              <span className="stat-box__label">coiffure</span>
+              <span className="stat-box__index">01</span>
+              <strong className="stat-box__title">Accueil attentif</strong>
+              <span className="stat-box__label">Un accueil chaleureux régulièrement mentionné dans les avis publics.</span>
             </div>
             <div className="stat-box">
-              <span className="stat-box__value">S</span>
-              <span className="stat-box__label">spa</span>
+              <span className="stat-box__index">02</span>
+              <strong className="stat-box__title">Prestations maîtrisées</strong>
+              <span className="stat-box__label">La technique et le professionnalisme ressortent des retours clients publics.</span>
             </div>
             <div className="stat-box">
-              <span className="stat-box__value">B</span>
-              <span className="stat-box__label">beauty</span>
+              <span className="stat-box__index">03</span>
+              <strong className="stat-box__title">Espace soigné</strong>
+              <span className="stat-box__label">Un environnement propre et soigné fait partie des thèmes récurrents.</span>
             </div>
           </div>
         </div>
@@ -192,7 +226,7 @@ function HomePage() {
             <p className="eyebrow">Prêt à réserver ?</p>
             <h2>Votre rendez-vous beauté commence ici.</h2>
           </div>
-          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Demander un rendez-vous</a>
+          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Prendre rendez-vous</a>
         </div>
       </section>
     </>
@@ -206,10 +240,22 @@ function TarifLine({ service }: { service: (typeof business.services)[number] })
         <h3>{service.title}</h3>
         <p>{service.shortDescription}</p>
       </div>
-      <div className="tarif-item__meta">
-        <span>{service.priceLabel ?? 'Demander le tarif'}</span>
-        <small>{service.duration ?? 'Sur devis'}</small>
-      </div>
+      {service.tariffLines ? (
+        <ul className="tarif-detail-list">
+          {service.tariffLines.map((line) => (
+            <li key={line.name}>
+              <span>{line.name}</span>
+              <small>{line.duration ?? ''}</small>
+              <strong>{line.price}</strong>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="tarif-item__meta">
+          <span>{service.priceLabel ?? 'Tarif sur demande'}</span>
+          <small>{service.duration ?? 'Sur devis'}</small>
+        </div>
+      )}
     </li>
   );
 }
@@ -263,7 +309,7 @@ function TarifsPage() {
 
         <div className="booking-banner">
           <p>Tarifs consultés sur le site public officiel. Pour les prestations non affichées, nous vous invitons à demander le tarif directement par WhatsApp.</p>
-          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Demander un tarif</a>
+          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Prendre rendez-vous</a>
         </div>
       </div>
     </section>
@@ -281,16 +327,17 @@ function SpaPage() {
 
         <div className="feature-layout">
           <div className="feature-layout__text">
-            <p>
-              Le spa Casa Beauty Lab met en avant la relaxation, le confort et la régénération. Les rituals sont pensés pour accompagner le corps et le visage dans une même logique de détente et de finition élégante.
-            </p>
-            <ul className="check-list">
-              <li>Hammam oriental</li>
-              <li>Massage relaxant</li>
-              <li>Rituel signature</li>
-            </ul>
+            <p>Les prestations spa et hammam publiées par Casa Beauty Lab réunissent massage et rituels hammam, avec des durées et tarifs clairement indiqués.</p>
+            <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Prendre rendez-vous</a>
           </div>
-          <div className="feature-layout__visual" aria-hidden="true" />
+          <div className="spa-services">
+            {business.services.filter((service) => service.category === 'Spa').map((service) => (
+              <article className="spa-service" key={service.id}>
+                <div><h2>{service.title}</h2><p>{service.shortDescription}</p></div>
+                <div className="spa-service__meta"><span>{service.priceLabel}</span><small>{service.duration}</small></div>
+              </article>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -307,11 +354,12 @@ function AboutPage() {
         </div>
         <div>
           <p>
-            Casa Beauty Lab est une adresse beauté qui met l’accent sur la précision, l’accueil et les soins personnalisés. La promesse est simple : une qualité de service attentive, dans un cadre soigné et discret.
+            Casa Beauty Lab est une adresse à Casablanca pour la coiffure, les soins capillaires, le massage, le hammam et les prestations beauté.
           </p>
           <p>
-            Le concept vise un cadre moderne, précis et apaisant, pensé pour offrir un accueil chaleureux et des soins adaptés à chaque cliente.
+            Les avis publics mentionnent régulièrement l’accueil, la propreté du cadre et le professionnalisme des prestations.
           </p>
+          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Prendre rendez-vous</a>
         </div>
       </div>
     </section>
@@ -361,7 +409,7 @@ function ContactPage() {
               <li key={slot.day}><span>{slot.day}</span><strong>{slot.hours}</strong></li>
             ))}
           </ul>
-          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Planifier</a>
+          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Prendre rendez-vous</a>
         </div>
       </div>
     </section>

@@ -67,6 +67,9 @@ button, input, textarea, select { font: inherit; }
   color: var(--muted);
   font-size: 0.95rem;
 }
+.main-nav a[aria-current='page'] { color: var(--ink); font-weight: 700; }
+.main-nav a[aria-current='page']::after { content: ''; display: block; height: 2px; margin-top: 0.2rem; background: var(--ink); }
+.menu-toggle { display: none; }
 .main-nav a:hover, .main-nav a:focus-visible { color: var(--ink); }
 .button {
   display: inline-flex;
@@ -236,7 +239,9 @@ h3 { font-size: 1.45rem; }
 }
 .service-card__image {
   width: 100%;
-  min-height: 270px;
+  min-height: 150px;
+  background: #ded8d2;
+  border-bottom: 1px solid var(--line);
 }
 .service-body {
   padding: 1.5rem;
@@ -271,15 +276,14 @@ h3 { font-size: 1.45rem; }
 }
 .editorial-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  align-items: center;
+  grid-template-columns: minmax(0, 760px);
+  justify-content: center;
 }
 .editorial-image {
-  min-height: 480px;
+  min-height: 320px;
   border-radius: var(--radius);
-  background: linear-gradient(135deg, #040404 0%, #303030 36%, #cfcfcf 100%);
-  box-shadow: var(--shadow);
+  background: #ded8d2;
+  border: 1px solid var(--line);
 }
 .check-list {
   list-style: none;
@@ -382,6 +386,11 @@ h3 { font-size: 1.45rem; }
   text-align: right;
   min-width: 160px;
 }
+.tarif-detail-list { flex: 1; list-style: none; padding: 0; margin: 0; display: grid; gap: 0.45rem; min-width: min(100%, 25rem); }
+.tarif-detail-list li { display: grid; grid-template-columns: minmax(0, 1fr) 5.5rem 8rem; gap: 0.75rem; align-items: baseline; padding-bottom: 0.35rem; border-bottom: 1px solid rgba(16, 16, 16, 0.08); }
+.tarif-detail-list li:last-child { border-bottom: none; }
+.tarif-detail-list small { color: var(--muted); }
+.tarif-detail-list strong { text-align: right; }
 .booking-banner {
   margin-top: 2rem;
   background: #111;
@@ -467,7 +476,7 @@ h3 { font-size: 1.45rem; }
 }
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr;
+  grid-template-columns: 1.3fr 1fr 1.2fr 1.1fr;
   gap: 2rem;
 }
 .site-footer h3 {
@@ -495,6 +504,12 @@ h3 { font-size: 1.45rem; }
     grid-template-columns: 1fr;
   }
   .main-nav { display: none; }
+  .menu-toggle { display: inline-flex; width: 2.75rem; height: 2.75rem; padding: 0.7rem; flex-direction: column; justify-content: center; gap: 0.35rem; border: 1px solid var(--ink); border-radius: 50%; background: transparent; cursor: pointer; }
+  .menu-toggle span { display: block; width: 100%; height: 2px; background: var(--ink); }
+  .main-nav--open { position: absolute; top: calc(100% + 1px); left: 0; right: 0; display: grid; gap: 0; padding: 0.75rem 1rem 1rem; background: var(--bg); border-bottom: 1px solid var(--line); box-shadow: 0 18px 32px rgba(10, 10, 10, 0.08); }
+  .main-nav--open a { padding: 0.75rem 0; color: var(--ink); }
+  .main-nav--open a[aria-current='page']::after { display: none; }
+  body.menu-open { overflow: hidden; }
   .hero-copy {
     max-width: none;
   }
@@ -504,7 +519,7 @@ h3 { font-size: 1.45rem; }
   .cta-wrap,
   .booking-banner {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
   }
   .tarif-item {
     flex-direction: column;
@@ -514,12 +529,16 @@ h3 { font-size: 1.45rem; }
     align-items: flex-start;
     text-align: left;
   }
+  .tarif-detail-list { width: 100%; min-width: 0; }
+  .tarif-detail-list li { grid-template-columns: minmax(0, 1fr) auto; gap: 0.4rem 0.75rem; }
+  .tarif-detail-list small { grid-column: 1; grid-row: 2; }
+  .tarif-detail-list strong { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
 }
 
 @media (max-width: 520px) {
   .section-spacing { padding: 3.25rem 0; }
   h1 { font-size: clamp(2.2rem, 10vw, 3rem); }
-  .button { width: 100%; }
+  .button { width: 100%; text-align: center; white-space: normal; }
   .hero-actions { flex-direction: column; }
   .hero-visual { min-height: 320px; }
   .hero-visual__frame {
@@ -527,6 +546,8 @@ h3 { font-size: 1.45rem; }
     right: 1rem;
     bottom: 1rem;
   }
+  .spa-service { flex-direction: column; }
+  .spa-service__meta { min-width: 0; text-align: left; }
 }
 
 @media (prefers-reduced-motion: reduce) {
