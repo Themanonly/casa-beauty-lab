@@ -83,9 +83,9 @@ export const getStartingPriceLabel = (locale: Locale, serviceId: string) => loca
   'soins-cheveux': 'ابتداءً من 250 درهم',
   massage: 'ابتداءً من 300 درهم',
 }[serviceId] ?? null) : ({
-  coiffure: 'Dès 70 DH',
-  'soins-cheveux': 'Dès 250 DH',
-  massage: 'Dès 300 DH',
+  coiffure: 'À partir de 70 DH',
+  'soins-cheveux': 'À partir de 250 DH',
+  massage: 'À partir de 300 DH',
 }[serviceId] ?? null);
 export const getDurationLabel = (locale: Locale, serviceId: string, fallback: string | undefined) => locale === 'ar' ? ({
   coiffure: 'حسب الطول',

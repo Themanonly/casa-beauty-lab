@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type Dispatch } from 'react';
+import { useEffect, useRef, useState, type Dispatch, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { business } from './content/business';
 import { getDurationLabel, getLocale, getPriceLabel, getStartingPriceLabel, localePath, translations, type Locale } from './i18n';
@@ -43,6 +43,8 @@ function LanguageSelector({ locale, copy, onSelect }: { locale: Locale; copy: ty
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
   useEffect(() => {
     const close = (event: MouseEvent) => { if (!ref.current?.contains(event.target as Node)) setOpen(false); };
     const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(false); triggerRef.current?.focus(); } };
@@ -50,14 +52,29 @@ function LanguageSelector({ locale, copy, onSelect }: { locale: Locale; copy: ty
     document.addEventListener('keydown', closeOnEscape);
     return () => { document.removeEventListener('mousedown', close); document.removeEventListener('keydown', closeOnEscape); };
   }, []);
+  useEffect(() => {
+    if (open) optionRefs.current[locale === 'fr' ? 0 : 1]?.focus();
+  }, [locale, open]);
+  const handleMenuKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
+    const currentIndex = optionRefs.current.findIndex((option) => option === document.activeElement);
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      const nextIndex = event.key === 'ArrowDown' ? (currentIndex + 1) % 2 : (currentIndex + 1) % 2;
+      optionRefs.current[nextIndex]?.focus();
+    }
+    if (event.key === 'Home' || event.key === 'End') {
+      event.preventDefault();
+      optionRefs.current[event.key === 'Home' ? 0 : 1]?.focus();
+    }
+  };
   return (
     <div className="language-selector" ref={ref}>
       <button ref={triggerRef} className="language-trigger" type="button" aria-haspopup="menu" aria-expanded={open} aria-label={copy.actions.switchLanguage} onClick={() => setOpen((value) => !value)}>
         {locale === 'fr' ? 'FR' : 'AR'} <span aria-hidden="true" className="language-chevron" />
       </button>
-      {open && <div className="language-menu" role="menu">
-        <button type="button" role="menuitem" onClick={() => { onSelect('fr'); setOpen(false); }}>FR — Français</button>
-        <button type="button" role="menuitem" onClick={() => { onSelect('ar'); setOpen(false); }}>AR — العربية</button>
+      {open && <div className="language-menu" ref={menuRef} role="menu" onKeyDown={handleMenuKeyDown}>
+        <button ref={(element) => { optionRefs.current[0] = element; }} className={locale === 'fr' ? 'language-option language-option--active' : 'language-option'} type="button" role="menuitem" aria-current={locale === 'fr' ? 'true' : undefined} onClick={() => { onSelect('fr'); setOpen(false); }}><span className="language-option__code">FR</span><span>Français</span>{locale === 'fr' && <span className="language-option__mark" aria-hidden="true">—</span>}</button>
+        <button ref={(element) => { optionRefs.current[1] = element; }} className={locale === 'ar' ? 'language-option language-option--active' : 'language-option'} type="button" role="menuitem" aria-current={locale === 'ar' ? 'true' : undefined} onClick={() => { onSelect('ar'); setOpen(false); }}><span className="language-option__code">AR</span><span>العربية</span>{locale === 'ar' && <span className="language-option__mark" aria-hidden="true">—</span>}</button>
       </div>}
     </div>
   );
@@ -223,6 +240,9 @@ function HomePage() {
               <article className="service-card" key={service.id}>
                 <div className="service-body">
                   <span className="pill">{copy.services[service.id].category}</span>
+                  <ul className="service-list" aria-label={copy.services[service.id].category}>
+                    {copy.services[service.id].tariffNames.map((name) => <li key={name}>{name}</li>)}
+                  </ul>
                   <p>{copy.services[service.id].shortDescription}</p>
                   <div className="service-meta">
                     <span className="service-price-full">{getPriceLabel(locale, service.id, service.priceLabel) ?? copy.common.onRequest}</span>
