@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://casabeautylab.ma/</loc>
-  </url>
-  <url>
-    <loc>https://casabeautylab.ma/services</loc>
-  </url>
-  <url>
-    <loc>https://casabeautylab.ma/about</loc>
-  </url>
-  <url>
-    <loc>https://casabeautylab.ma/gallery</loc>
-  </url>
-  <url>
-    <loc>https://casabeautylab.ma/contact</loc>
-  </url>
+  <url><loc>https://casabeautylab-casablanca.netlify.app/</loc></url>
+  <url><loc>https://casabeautylab-casablanca.netlify.app/tarifs</loc></url>
+  <url><loc>https://casabeautylab-casablanca.netlify.app/spa</loc></url>
+  <url><loc>https://casabeautylab-casablanca.netlify.app/gallery</loc></url>
+  <url><loc>https://casabeautylab-casablanca.netlify.app/about</loc></url>
+  <url><loc>https://casabeautylab-casablanca.netlify.app/contact</loc></url>
+  <url><loc>https://casabeautylab-casablanca.netlify.app/ar</loc></url>
+  <url><loc>https://casabeautylab-casablanca.netlify.app/ar/tarifs</loc></url>
+  <url><loc>https://casabeautylab-casablanca.netlify.app/ar/spa</loc></url>
+  <url><loc>https://casabeautylab-casablanca.netlify.app/ar/gallery</loc></url>
+  <url><loc>https://casabeautylab-casablanca.netlify.app/ar/about</loc></url>
+  <url><loc>https://casabeautylab-casablanca.netlify.app/ar/contact</loc></url>
 </urlset>

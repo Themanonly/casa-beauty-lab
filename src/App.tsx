@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link, NavLink, Route, Routes } from 'react-router-dom';
+import { useEffect, useRef, useState, type Dispatch } from 'react';
+import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { business } from './content/business';
+import { getLocale, getPriceLabel, localePath, translations, type Locale } from './i18n';
 
 const featuredServices = business.services.filter((service) => service.featured);
 
@@ -32,11 +33,46 @@ const heroScenes = [
     position: 'center 46%',
   },
 ];
+type LocaleSelect = Dispatch<Locale>;
+
+function useSiteCopy() {
+  return translations[getLocale(useLocation().pathname)];
+}
+
+function LanguageSelector({ locale, copy, onSelect }: { locale: Locale; copy: typeof translations.fr; onSelect: LocaleSelect }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const close = (event: MouseEvent) => { if (!ref.current?.contains(event.target as Node)) setOpen(false); };
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') { setOpen(false); triggerRef.current?.focus(); } };
+    document.addEventListener('mousedown', close);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => { document.removeEventListener('mousedown', close); document.removeEventListener('keydown', closeOnEscape); };
+  }, []);
+  return (
+    <div className="language-selector" ref={ref}>
+      <button ref={triggerRef} className="language-trigger" type="button" aria-haspopup="menu" aria-expanded={open} aria-label={copy.actions.switchLanguage} onClick={() => setOpen((value) => !value)}>
+        {locale === 'fr' ? 'FR' : 'AR'} <span aria-hidden="true" className="language-chevron" />
+      </button>
+      {open && <div className="language-menu" role="menu">
+        <button type="button" role="menuitem" onClick={() => { onSelect('fr'); setOpen(false); }}>FR — Français</button>
+        <button type="button" role="menuitem" onClick={() => { onSelect('ar'); setOpen(false); }}>AR — العربية</button>
+      </div>}
+    </div>
+  );
+}
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const locale = getLocale(location.pathname);
+  const copy = translations[locale];
 
   useEffect(() => {
+    document.documentElement.lang = copy.locale;
+    document.documentElement.dir = copy.direction;
     document.body.classList.toggle('menu-open', menuOpen);
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setMenuOpen(false);
@@ -46,33 +82,39 @@ function App() {
       document.body.classList.remove('menu-open');
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [menuOpen]);
+  }, [copy.direction, copy.locale, menuOpen]);
 
   const closeMenu = () => setMenuOpen(false);
+  const switchLocale = (nextLocale: Locale) => {
+    const frenchPath = locale === 'ar' ? location.pathname.replace(/^\/ar(?=\/|$)/, '') || '/' : location.pathname;
+    navigate(localePath(nextLocale, frenchPath));
+    closeMenu();
+  };
 
   return (
     <div className="app-shell">
       <header className="topbar">
         <div className="container nav-wrap">
-          <Link className="brand" to="/" aria-label="Casa Beauty Lab accueil">
+          <Link className="brand" to={localePath(locale, '/')} aria-label={`Casa Beauty Lab ${copy.nav.home}`}>
             <span className="brand-mark">CASA</span>
             <span className="brand-mark">BEAUTY</span>
             <span className="brand-mark brand-mark--script">lab</span>
           </Link>
 
-          <nav className={`main-nav${menuOpen ? ' main-nav--open' : ''}`} aria-label="Navigation principale" id="main-navigation">
-            <NavLink to="/" end onClick={closeMenu}>Accueil</NavLink>
-            <NavLink to="/tarifs" onClick={closeMenu}>Tarifs</NavLink>
-            <NavLink to="/spa" onClick={closeMenu}>Spa</NavLink>
-            <NavLink to="/gallery" onClick={closeMenu}>Le lab</NavLink>
-            <NavLink to="/about" onClick={closeMenu}>À propos</NavLink>
-            <NavLink to="/contact" onClick={closeMenu}>Contact</NavLink>
+          <nav className={`main-nav${menuOpen ? ' main-nav--open' : ''}`} aria-label={copy.nav.home} id="main-navigation">
+            <NavLink to={localePath(locale, '/')} end onClick={closeMenu}>{copy.nav.home}</NavLink>
+            <NavLink to={localePath(locale, '/tarifs')} onClick={closeMenu}>{copy.nav.prices}</NavLink>
+            <NavLink to={localePath(locale, '/spa')} onClick={closeMenu}>{copy.nav.spa}</NavLink>
+            <NavLink to={localePath(locale, '/gallery')} onClick={closeMenu}>{copy.nav.lab}</NavLink>
+            <NavLink to={localePath(locale, '/about')} onClick={closeMenu}>{copy.nav.about}</NavLink>
+            <NavLink to={localePath(locale, '/contact')} onClick={closeMenu}>{copy.nav.contact}</NavLink>
           </nav>
 
           <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">
-            Réserver
+            {copy.actions.book}
           </a>
-          <button className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="main-navigation" aria-label={menuOpen ? 'Fermer le menu' : 'Ouvrir le menu'} onClick={() => setMenuOpen((open) => !open)}>
+          <LanguageSelector locale={locale} copy={copy} onSelect={switchLocale} />
+          <button className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="main-navigation" aria-label={menuOpen ? copy.actions.closeMenu : copy.actions.openMenu} onClick={() => setMenuOpen((open) => !open)}>
             <span />
             <span />
           </button>
@@ -87,7 +129,13 @@ function App() {
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="*" element={<HomePage />} />
+          <Route path="/ar" element={<HomePage />} />
+          <Route path="/ar/tarifs" element={<TarifsPage />} />
+          <Route path="/ar/spa" element={<SpaPage />} />
+          <Route path="/ar/gallery" element={<GalleryPage />} />
+          <Route path="/ar/about" element={<AboutPage />} />
+          <Route path="/ar/contact" element={<ContactPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
 
@@ -99,21 +147,21 @@ function App() {
               <span className="brand-mark">BEAUTY</span>
               <span className="brand-mark brand-mark--script">lab</span>
             </div>
-            <p>Coiffure, spa et beauté à Casablanca.</p>
+            <p>{copy.footer.tagline}</p>
           </div>
 
           <div>
-            <h3>Visiter</h3>
+            <h3>{copy.footer.visit}</h3>
             <ul>
-              <li><Link to="/tarifs">Tarifs</Link></li>
-              <li><Link to="/spa">Spa</Link></li>
-              <li><Link to="/contact">Contact</Link></li>
-              <li><a href={business.mapUrl} target="_blank" rel="noreferrer">Itinéraire</a></li>
+              <li><Link to={localePath(locale, '/tarifs')}>{copy.nav.prices}</Link></li>
+              <li><Link to={localePath(locale, '/spa')}>{copy.nav.spa}</Link></li>
+              <li><Link to={localePath(locale, '/contact')}>{copy.nav.contact}</Link></li>
+              <li><a href={business.mapUrl} target="_blank" rel="noreferrer">{copy.actions.directions}</a></li>
             </ul>
           </div>
 
           <div>
-            <h3>Contact</h3>
+            <h3>{copy.footer.contact}</h3>
             <ul>
               <li><a href={business.phoneHref}>{business.phoneDisplay}</a></li>
               <li><a href={business.whatsappHref} target="_blank" rel="noreferrer">WhatsApp</a></li>
@@ -123,10 +171,10 @@ function App() {
           </div>
 
           <div>
-            <h3>Horaires</h3>
+            <h3>{copy.footer.hours}</h3>
             <ul>
-              {business.openingHours.map((slot) => (
-                <li key={slot.day}><span>{slot.day}</span> <strong>{slot.hours}</strong></li>
+              {business.openingHours.map((slot, index) => (
+                <li key={slot.day}><span>{copy.days[index]}</span> <strong dir="ltr">{slot.hours}</strong></li>
               ))}
             </ul>
           </div>
@@ -137,24 +185,22 @@ function App() {
 }
 
 function HomePage() {
+  const copy = useSiteCopy();
+  const locale = getLocale(useLocation().pathname);
   return (
     <>
       <section className="hero section-spacing">
         <div className="container hero-grid">
           <div className="hero-copy">
-            <p className="eyebrow">Casablanca • Coiffure • spa • beauté</p>
-            <h1>Coiffure, beauté &amp; spa à Casablanca.</h1>
-            <p className="lead">
-              Des soins capillaires, le massage et le hammam pour une routine beauté claire et confortable.
-            </p>
+            <p className="eyebrow">{copy.home.eyebrow}</p>
+            <h1>{copy.home.title}</h1>
+            <p className="lead">{copy.home.lead}</p>
             <div className="hero-actions">
-              <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Prendre rendez-vous</a>
-              <Link className="button button--secondary" to="/tarifs">Voir les tarifs</Link>
+              <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">{copy.actions.book}</a>
+              <Link className="button button--secondary" to={localePath(locale, '/tarifs')}>{copy.actions.prices}</Link>
             </div>
-            <div className="hero-tags" aria-label="Prestations Casa Beauty Lab">
-              <span>Coiffure</span>
-              <span>Massage</span>
-              <span>Beauty</span>
+            <div className="hero-tags" aria-label={copy.common.servicesLabel}>
+              {copy.home.tags.map((tag) => <span key={tag}>{tag}</span>)}
             </div>
           </div>
 
@@ -165,11 +211,11 @@ function HomePage() {
       <section className="section-spacing">
         <div className="container split-block">
           <div>
-            <p className="eyebrow">Casa Beauty Lab</p>
-            <h2>Le soin, la précision et l’écoute au centre de chaque visite.</h2>
+            <p className="eyebrow">{copy.home.introEyebrow}</p>
+            <h2>{copy.home.introTitle}</h2>
           </div>
           <p>
-            Une adresse à Casablanca pour la coiffure, les soins capillaires, le massage, le hammam et les prestations beauté, avec une approche attentive et contemporaine.
+            {copy.home.introText}
           </p>
         </div>
       </section>
@@ -177,20 +223,20 @@ function HomePage() {
       <section className="section-spacing">
         <div className="container">
           <div className="section-heading">
-            <p className="eyebrow">Signature</p>
-            <h2>Les prestations signature.</h2>
+            <p className="eyebrow">{copy.home.signatureEyebrow}</p>
+            <h2>{copy.home.signatureTitle}</h2>
           </div>
           <div className="service-grid">
             {featuredServices.map((service) => (
               <article className="service-card" key={service.id}>
                 <div className="service-body">
                   <span className="pill">{service.category}</span>
-                  <h3>{service.title}</h3>
-                  <p>{service.shortDescription}</p>
+                  <h3>{copy.services[service.id].title}</h3>
+                  <p>{copy.services[service.id].shortDescription}</p>
                   <div className="service-meta">
-                    <span>{service.priceLabel ?? 'Tarif sur demande'}</span>
+                    <span>{getPriceLabel(locale, service.id, service.priceLabel) ?? copy.common.onRequest}</span>
                     <span>{service.duration ?? 'Sur devis'}</span>
-                    <Link to="/tarifs">Voir les tarifs</Link>
+                    <Link to={localePath(locale, '/tarifs')}>{copy.common.pricesLink}</Link>
                   </div>
                 </div>
               </article>
@@ -202,15 +248,11 @@ function HomePage() {
       <section className="section-spacing editorial-band">
         <div className="container editorial-layout">
           <div className="editorial-copy">
-            <p className="eyebrow">Expertise beauté</p>
-            <h2>Des soins pensés pour un résultat naturel et durable.</h2>
-            <p>
-              Chaque visite est construite autour de l’écoute, de la technique et du confort. Le but reste simple : un résultat propre, net et élégant, sans artifice ni surcharge.
-            </p>
+            <p className="eyebrow">{copy.home.expertiseEyebrow}</p>
+            <h2>{copy.home.expertiseTitle}</h2>
+            <p>{copy.home.expertiseText}</p>
             <ul className="check-list">
-              <li>Consultation et conseil personnalisés</li>
-              <li>Produits et protocoles adaptés</li>
-              <li>Ambiance calme et professionnelle</li>
+              {copy.home.checks.map((check) => <li key={check}>{check}</li>)}
             </ul>
           </div>
         </div>
@@ -219,25 +261,15 @@ function HomePage() {
       <section className="section-spacing">
         <div className="container">
           <div className="section-heading">
-            <p className="eyebrow">Expérience</p>
-            <h2>L’expérience Casa Beauty Lab.</h2>
+            <p className="eyebrow">{copy.home.experienceEyebrow}</p>
+            <h2>{copy.home.experienceTitle}</h2>
           </div>
           <div className="review-row experience-grid">
-            <div className="stat-box">
-              <span className="stat-box__index">01</span>
-              <strong className="stat-box__title">Accueil attentif</strong>
-              <span className="stat-box__label">Un accueil chaleureux régulièrement mentionné dans les avis publics.</span>
-            </div>
-            <div className="stat-box">
-              <span className="stat-box__index">02</span>
-              <strong className="stat-box__title">Prestations maîtrisées</strong>
-              <span className="stat-box__label">La technique et le professionnalisme ressortent des retours clients publics.</span>
-            </div>
-            <div className="stat-box">
-              <span className="stat-box__index">03</span>
-              <strong className="stat-box__title">Espace soigné</strong>
-              <span className="stat-box__label">Un environnement propre et soigné fait partie des thèmes récurrents.</span>
-            </div>
+            {copy.home.experience.map((item, index) => <div className="stat-box" key={item.title}>
+              <span className="stat-box__index">0{index + 1}</span>
+              <strong className="stat-box__title">{item.title}</strong>
+              <span className="stat-box__label">{item.text}</span>
+            </div>)}
           </div>
         </div>
       </section>
@@ -245,10 +277,10 @@ function HomePage() {
       <section className="section-spacing cta-band">
         <div className="container cta-wrap">
           <div>
-            <p className="eyebrow">Prêt à réserver ?</p>
-            <h2>Votre rendez-vous beauté commence ici.</h2>
+            <p className="eyebrow">{copy.home.ctaEyebrow}</p>
+            <h2>{copy.home.ctaTitle}</h2>
           </div>
-          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Prendre rendez-vous</a>
+          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">{copy.actions.book}</a>
         </div>
       </section>
     </>
@@ -256,6 +288,9 @@ function HomePage() {
 }
 
 function HeroMedia() {
+  const copy = useSiteCopy();
+  const locale = getLocale(useLocation().pathname);
+  const localizedAlts = locale === 'ar' ? ['نتيجة بالياج في صالون Casa Beauty Lab', 'جلسة تدليك في مساحة السبا في Casa Beauty Lab', 'تفاصيل الرموش والحواجب'] : heroScenes.map((scene) => scene.alt);
   const [activeScene, setActiveScene] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -302,7 +337,7 @@ function HeroMedia() {
   return (
     <div
       className={`hero-visual${reducedMotion ? ' hero-visual--reduced' : ''}`}
-      aria-label="Sélection éditoriale Casa Beauty Lab"
+      aria-label={copy.common.sceneLabel}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
@@ -320,25 +355,25 @@ function HeroMedia() {
                 muted
                 playsInline
                 preload={index === activeScene ? 'auto' : 'none'}
-                aria-label={scene.alt}
+                aria-label={localizedAlts[index]}
                 onLoadedMetadata={(event) => { event.currentTarget.currentTime = scene.startAt; }}
                 onEnded={(event) => { event.currentTarget.currentTime = scene.startAt; void event.currentTarget.play().catch(() => undefined); }}
               />
             ) : (
-              <img src={scene.src} alt={scene.alt} style={{ objectPosition: scene.position }} />
+                <img src={scene.src} alt={localizedAlts[index]} style={{ objectPosition: scene.position }} />
             )}
           </div>
         ))}
       </div>
       <div className="hero-visual__shade" />
-      <div className="hero-scene-selector" role="tablist" aria-label="Choisir une ambiance">
+      <div className="hero-scene-selector" role="tablist" aria-label={copy.common.atmosphere}>
         {heroScenes.map((scene, index) => (
           <button
             className={`hero-scene-tab${index === activeScene ? ' hero-scene-tab--active' : ''}`}
             type="button"
             role="tab"
             aria-selected={index === activeScene}
-            aria-label={`Afficher la scène ${scene.label}`}
+            aria-label={`${copy.common.atmosphere}: ${scene.label}`}
             onClick={() => selectScene(index)}
             key={scene.id}
           >
@@ -352,26 +387,28 @@ function HeroMedia() {
 }
 
 function TarifLine({ service }: { service: (typeof business.services)[number] }) {
+  const copy = useSiteCopy();
+  const localized = copy.services[service.id];
   return (
     <li className="tarif-item">
       <div>
-        <h3>{service.title}</h3>
-        <p>{service.shortDescription}</p>
+        <h3>{localized.title}</h3>
+        <p>{localized.shortDescription}</p>
       </div>
       {service.tariffLines ? (
         <ul className="tarif-detail-list">
           {service.tariffLines.map((line) => (
             <li key={line.name}>
-              <span>{line.name}</span>
-              <small>{line.duration ?? ''}</small>
+              <span>{localized.tariffNames[service.tariffLines?.indexOf(line) ?? 0] ?? line.name}</span>
+              <small dir="ltr">{line.duration ?? ''}</small>
               <strong>{line.price}</strong>
             </li>
           ))}
         </ul>
       ) : (
         <div className="tarif-item__meta">
-          <span>{service.priceLabel ?? 'Tarif sur demande'}</span>
-          <small>{service.duration ?? 'Sur devis'}</small>
+          <span>{service.priceLabel ?? copy.common.onRequest}</span>
+          <small>{service.duration ?? copy.common.quote}</small>
         </div>
       )}
     </li>
@@ -379,17 +416,18 @@ function TarifLine({ service }: { service: (typeof business.services)[number] })
 }
 
 function TarifsPage() {
+  const copy = useSiteCopy();
   return (
     <section className="section-spacing page-section">
       <div className="container">
         <div className="section-heading section-heading--left">
-          <p className="eyebrow">Tarifs</p>
-          <h1>Des prestations claires, sans ambiguïté.</h1>
+          <p className="eyebrow">{copy.pages.prices.eyebrow}</p>
+          <h1>{copy.pages.prices.title}</h1>
         </div>
 
         <div className="tarif-wrapper">
           <div className="tarif-panel">
-            <h2>Coiffure</h2>
+            <h2>{copy.pages.prices.categories[0]}</h2>
             <ul>
               {business.services.filter((service) => service.category === 'Coiffure').map((service) => (
                 <TarifLine key={service.id} service={service} />
@@ -398,7 +436,7 @@ function TarifsPage() {
           </div>
 
           <div className="tarif-panel">
-            <h2>Soins</h2>
+            <h2>{copy.pages.prices.categories[1]}</h2>
             <ul>
               {business.services.filter((service) => service.category === 'Soins').map((service) => (
                 <TarifLine key={service.id} service={service} />
@@ -407,7 +445,7 @@ function TarifsPage() {
           </div>
 
           <div className="tarif-panel">
-            <h2>Spa & Hammam</h2>
+            <h2>{copy.pages.prices.categories[2]}</h2>
             <ul>
               {business.services.filter((service) => service.category === 'Spa').map((service) => (
                 <TarifLine key={service.id} service={service} />
@@ -416,7 +454,7 @@ function TarifsPage() {
           </div>
 
           <div className="tarif-panel">
-            <h2>Beauté & événement</h2>
+            <h2>{copy.pages.prices.categories[3]}</h2>
             <ul>
               {business.services.filter((service) => service.category === 'Beauté' || service.category === 'Événement').map((service) => (
                 <TarifLine key={service.id} service={service} />
@@ -426,8 +464,8 @@ function TarifsPage() {
         </div>
 
         <div className="booking-banner">
-          <p>Tarifs consultés sur le site public officiel. Pour les prestations non affichées, nous vous invitons à demander le tarif directement par WhatsApp.</p>
-          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Prendre rendez-vous</a>
+          <p>{copy.pages.prices.note}</p>
+          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">{copy.actions.book}</a>
         </div>
       </div>
     </section>
@@ -435,24 +473,26 @@ function TarifsPage() {
 }
 
 function SpaPage() {
+  const copy = useSiteCopy();
+  const locale = getLocale(useLocation().pathname);
   return (
     <section className="section-spacing page-section">
       <div className="container">
         <div className="section-heading section-heading--left">
-          <p className="eyebrow">Spa</p>
-          <h1>Hammam, massage et détente.</h1>
+          <p className="eyebrow">{copy.pages.spa.eyebrow}</p>
+          <h1>{copy.pages.spa.title}</h1>
         </div>
 
         <div className="feature-layout">
           <div className="feature-layout__text">
-            <p>Les prestations spa et hammam publiées par Casa Beauty Lab réunissent massage et rituels hammam, avec des durées et tarifs clairement indiqués.</p>
-            <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Prendre rendez-vous</a>
+            <p>{copy.pages.spa.text}</p>
+            <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">{copy.actions.book}</a>
           </div>
           <div className="spa-services">
             {business.services.filter((service) => service.category === 'Spa').map((service) => (
               <article className="spa-service" key={service.id}>
-                <div><h2>{service.title}</h2><p>{service.shortDescription}</p></div>
-                <div className="spa-service__meta"><span>{service.priceLabel}</span><small>{service.duration}</small></div>
+                <div><h2>{copy.services[service.id].title}</h2><p>{copy.services[service.id].shortDescription}</p></div>
+                <div className="spa-service__meta"><span>{getPriceLabel(locale, service.id, service.priceLabel) ?? copy.common.onRequest}</span><small>{service.duration ?? copy.common.quote}</small></div>
               </article>
             ))}
           </div>
@@ -463,21 +503,22 @@ function SpaPage() {
 }
 
 function AboutPage() {
+  const copy = useSiteCopy();
   return (
     <section className="section-spacing page-section">
       <div className="container split-block about-block">
         <div>
-          <p className="eyebrow">À propos</p>
-          <h1>Un concept beauté contemporain, pensé pour Casablanca.</h1>
+          <p className="eyebrow">{copy.pages.about.eyebrow}</p>
+          <h1>{copy.pages.about.title}</h1>
         </div>
         <div>
           <p>
-            Casa Beauty Lab est une adresse à Casablanca pour la coiffure, les soins capillaires, le massage, le hammam et les prestations beauté.
+            {copy.pages.about.paragraphs[0]}
           </p>
           <p>
-            Les avis publics mentionnent régulièrement l’accueil, la propreté du cadre et le professionnalisme des prestations.
+            {copy.pages.about.paragraphs[1]}
           </p>
-          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Prendre rendez-vous</a>
+          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">{copy.actions.book}</a>
         </div>
       </div>
     </section>
@@ -485,19 +526,20 @@ function AboutPage() {
 }
 
 function GalleryPage() {
+  const copy = useSiteCopy();
   return (
     <section className="section-spacing page-section">
       <div className="container">
         <div className="section-heading section-heading--left">
-          <p className="eyebrow">Le lab</p>
-          <h1>Une identité visuelle sobre et audacieuse.</h1>
+          <p className="eyebrow">{copy.pages.gallery.eyebrow}</p>
+          <h1>{copy.pages.gallery.title}</h1>
         </div>
         <div className="gallery-grid">
           {business.gallery.map((item) => (
             <figure className="gallery-item" key={item.title}>
               <img
                 src={item.image}
-                alt={item.alt}
+                alt={copy.gallery[business.gallery.indexOf(item)].alt}
                 loading="lazy"
                 width={item.width}
                 height={item.height}
@@ -505,16 +547,16 @@ function GalleryPage() {
               />
               <figcaption>
                 <span className="gallery-item__index">{String(business.gallery.indexOf(item) + 1).padStart(2, '0')}</span>
-                <strong>{item.title}</strong>
+                <strong>{copy.gallery[business.gallery.indexOf(item)].title}</strong>
               </figcaption>
             </figure>
           ))}
         </div>
         <div className="gallery-support">
-          <img src="/media/lab/interior/le-lab-interior.jpg" alt="Espace coiffure et manucure à l intérieur de Casa Beauty Lab" loading="lazy" width="1200" height="800" />
+          <img src="/media/lab/interior/le-lab-interior.jpg" alt={copy.pages.gallery.interiorAlt} loading="lazy" width="1200" height="800" />
           <div>
-            <p className="eyebrow">Le lieu</p>
-            <h2>Un espace pensé pour prendre son temps.</h2>
+            <p className="eyebrow">{copy.pages.gallery.placeEyebrow}</p>
+            <h2>{copy.pages.gallery.placeTitle}</h2>
           </div>
         </div>
       </div>
@@ -523,32 +565,39 @@ function GalleryPage() {
 }
 
 function ContactPage() {
+  const copy = useSiteCopy();
   return (
     <section className="section-spacing page-section">
       <div className="container contact-grid">
         <div>
-          <p className="eyebrow">Contact</p>
-          <h1>Nous sommes à votre écoute.</h1>
+          <p className="eyebrow">{copy.pages.contact.eyebrow}</p>
+          <h1>{copy.pages.contact.title}</h1>
           <ul className="contact-list">
-            <li><strong>Téléphone</strong><a href={business.phoneHref}>{business.phoneDisplay}</a></li>
-            <li><strong>WhatsApp</strong><a href={business.whatsappHref} target="_blank" rel="noreferrer">Envoyer un message</a></li>
-            <li><strong>Instagram</strong><a href={business.instagramUrl} target="_blank" rel="noreferrer">{business.instagramHandle}</a></li>
-            <li><strong>Adresse</strong><a href={business.mapUrl} target="_blank" rel="noreferrer">{business.address}</a></li>
+            <li><strong>{copy.pages.contact.phone}</strong><a href={business.phoneHref} dir="ltr">{business.phoneDisplay}</a></li>
+            <li><strong>{copy.pages.contact.whatsapp}</strong><a href={business.whatsappHref} target="_blank" rel="noreferrer">{copy.actions.message}</a></li>
+            <li><strong>{copy.pages.contact.instagram}</strong><a href={business.instagramUrl} target="_blank" rel="noreferrer">{business.instagramHandle}</a></li>
+            <li><strong>{copy.pages.contact.address}</strong><a href={business.mapUrl} target="_blank" rel="noreferrer">{business.address}</a></li>
           </ul>
         </div>
 
         <div className="hours-card">
-          <h2>Horaires</h2>
+          <h2>{copy.footer.hours}</h2>
           <ul>
-            {business.openingHours.map((slot) => (
-              <li key={slot.day}><span>{slot.day}</span><strong>{slot.hours}</strong></li>
+            {business.openingHours.map((slot, index) => (
+              <li key={slot.day}><span>{copy.days[index]}</span><strong dir="ltr">{slot.hours}</strong></li>
             ))}
           </ul>
-          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">Prendre rendez-vous</a>
+          <a className="button button--primary" href={business.bookingUrl} target="_blank" rel="noreferrer">{copy.actions.book}</a>
         </div>
       </div>
     </section>
   );
+}
+
+function NotFoundPage() {
+  const copy = useSiteCopy();
+  const locale = getLocale(useLocation().pathname);
+  return <section className="section-spacing page-section"><div className="container"><p className="eyebrow">404</p><h1>{locale === 'ar' ? 'هذه الصفحة غير موجودة.' : 'Cette page est introuvable.'}</h1><Link className="button button--primary" to={localePath(locale, '/')}>{copy.nav.home}</Link></div></section>;
 }
 
 export default App;

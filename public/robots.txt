@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://casabeautylab.ma/sitemap.xml
+Sitemap: https://casabeautylab-casablanca.netlify.app/sitemap.xml
