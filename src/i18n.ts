@@ -59,7 +59,7 @@ const french: SiteCopy = {
 const arabic: SiteCopy = {
   ...french, locale: 'ar-MA', direction: 'rtl', languageName: 'العربية', alternateLanguageName: 'Français',
   nav: { home: 'الرئيسية', prices: 'الأسعار', spa: 'السبا', lab: 'المختبر', about: 'من نحن', contact: 'اتصل بنا' },
-  actions: { book: 'احجز موعداً', prices: '查看 الأسعار', directions: 'الاتجاهات', message: 'إرسال رسالة', closeMenu: 'إغلاق القائمة', openMenu: 'فتح القائمة', switchLanguage: 'اختيار اللغة' },
+  actions: { book: 'احجز موعداً', prices: 'عرض الأسعار', directions: 'الاتجاهات', message: 'إرسال رسالة', closeMenu: 'إغلاق القائمة', openMenu: 'فتح القائمة', switchLanguage: 'اختيار اللغة' },
   footer: { tagline: 'تصفيف الشعر والسبا والعناية بالجمال في الدار البيضاء.', visit: 'استكشف', contact: 'اتصل بنا', hours: 'ساعات العمل' },
   days: ['الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'],
   home: { eyebrow: 'الدار البيضاء • تصفيف الشعر • سبا • جمال', title: 'تصفيف الشعر والعناية بالجمال والسبا في الدار البيضاء.', lead: 'علاجات للشعر والتدليك والحمام المغربي ضمن تجربة جمال هادئة وواضحة.', tags: ['تصفيف الشعر', 'تدليك', 'عناية بالجمال'], introEyebrow: 'Casa Beauty Lab', introTitle: 'العناية والدقة والإنصات في صميم كل زيارة.', introText: 'عنوان في الدار البيضاء لتصفيف الشعر والعناية به والتدليك والحمام المغربي وخدمات الجمال، برؤية عصرية واهتمام دقيق.', signatureEyebrow: 'خدمات مميزة', signatureTitle: 'خدمات Casa Beauty Lab المميزة.', expertiseEyebrow: 'خبرة في الجمال', expertiseTitle: 'علاجات مصممة لنتيجة طبيعية تدوم.', expertiseText: 'تقوم كل زيارة على الإنصات والخبرة والراحة. هدفنا بسيط: نتيجة أنيقة ونظيفة ومتوازنة.', checks: ['استشارة ونصيحة مخصصة', 'منتجات وبروتوكولات مناسبة', 'أجواء هادئة واحترافية'], experienceEyebrow: 'التجربة', experienceTitle: 'تجربة Casa Beauty Lab.', experience: [{ title: 'استقبال دافئ', text: 'يُذكر الترحيب الدافئ بانتظام في التقييمات العامة.' }, { title: 'خدمات متقنة', text: 'تظهر الخبرة والاحترافية في آراء الزبائن المنشورة.' }, { title: 'مساحة أنيقة', text: 'النظافة والعناية بالمكان من المواضيع المتكررة.' }], ctaEyebrow: 'هل أنت مستعد للحجز؟', ctaTitle: 'تبدأ عنايتك بالجمال من هنا.' },
@@ -78,3 +78,12 @@ export const getPriceLabel = (locale: Locale, serviceId: string, fallback: strin
   massage: 'تدليك استرخائي 45 دقيقة 300 درهم · منشط ساعة 400 درهم · العميق / الرياضي: السعر عند الطلب · تدليك الرأس: السعر عند الطلب',
   hammam: 'شرقي 45 دقيقة 150 درهم · رويال ساعة 190 درهم · سيغنتشر ساعة 250 درهم · للأطفال 30 دقيقة 90 درهماً'
 }[serviceId] ?? 'السعر عند الطلب') : fallback;
+export const getDurationLabel = (locale: Locale, serviceId: string, fallback: string | undefined) => locale === 'ar' ? ({
+  coiffure: 'حسب الطول',
+  'soins-cheveux': '45–90 دقيقة',
+  massage: '45 دقيقة–ساعة',
+  hammam: '30 دقيقة–ساعة',
+  onglerie: '30–60 دقيقة',
+  esthetique: '20–45 دقيقة',
+  mariage: 'حسب التسعيرة'
+}[serviceId] ?? 'حسب التسعيرة') : fallback;
