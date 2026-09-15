@@ -283,6 +283,7 @@ function HeroMedia() {
   const copy = useSiteCopy();
   const locale = getLocale(useLocation().pathname);
   const localizedAlts = locale === 'ar' ? ['نتيجة بالياج في صالون Casa Beauty Lab', 'جلسة تدليك في مساحة السبا في Casa Beauty Lab', 'تفاصيل الرموش والحواجب'] : heroScenes.map((scene) => scene.alt);
+  const localizedSceneLabels = locale === 'ar' ? ['تصفيف الشعر', 'السبا والحمام المغربي', 'الجمال'] : heroScenes.map((scene) => scene.label);
   const [activeScene, setActiveScene] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -365,12 +366,12 @@ function HeroMedia() {
             type="button"
             role="tab"
             aria-selected={index === activeScene}
-            aria-label={`${copy.common.atmosphere}: ${scene.label}`}
+            aria-label={`${copy.common.atmosphere}: ${localizedSceneLabels[index]}`}
             onClick={() => selectScene(index)}
             key={scene.id}
           >
             <span>{String(index + 1).padStart(2, '0')}</span>
-            <strong>{scene.label}</strong>
+            <strong>{localizedSceneLabels[index]}</strong>
           </button>
         ))}
       </div>
