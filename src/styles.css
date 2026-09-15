@@ -474,7 +474,7 @@ h3 { font-size: 1.45rem; }
 }
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.3fr 1fr 1.2fr 1.1fr;
+  grid-template-columns: 1.3fr 1fr 1.2fr;
   gap: 2rem;
 }
 .site-footer h3 {

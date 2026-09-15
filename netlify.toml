@@ -2,41 +2,6 @@
   command = "npm run build"
   publish = "dist"
 
-[[redirects]]
-  from = "/ar/*"
-  to = "/ar/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/tarifs"
-  to = "/tarifs/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/spa"
-  to = "/spa/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/gallery"
-  to = "/gallery/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/about"
-  to = "/about/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/contact"
-  to = "/contact/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
 [[headers]]
   for = "/*"
   [headers.values]

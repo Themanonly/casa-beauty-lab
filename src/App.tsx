@@ -170,14 +170,6 @@ function App() {
             </ul>
           </div>
 
-          <div>
-            <h3>{copy.footer.hours}</h3>
-            <ul>
-              {business.openingHours.map((slot, index) => (
-                <li key={slot.day}><span>{copy.days[index]}</span> <strong dir="ltr">{slot.hours}</strong></li>
-              ))}
-            </ul>
-          </div>
         </div>
       </footer>
     </div>
