@@ -35,10 +35,10 @@ const heroScenes = [
 ];
 type LocaleSelect = Dispatch<Locale>;
 
-const serviceCardMedia: Record<string, { src: string; alt: string }> = {
-  coiffure: { src: '/media/lab/coiffure/coiffure-signature.png', alt: 'Résultat coiffure signature chez Casa Beauty Lab' },
-  'soins-cheveux': { src: '/media/lab/lissage/lissage-soin.jpg', alt: 'Espace de soin capillaire chez Casa Beauty Lab' },
-  massage: { src: '/media/lab/hammam/hammam-ritual.png', alt: 'Rituel de massage et bien-être chez Casa Beauty Lab' },
+const serviceCardMedia: Record<string, { src: string; frAlt: string; arAlt: string }> = {
+  coiffure: { src: '/media/service-coiffure.jpg', frAlt: 'Cheveux longs aux reflets balayage et au mouvement naturel', arAlt: 'شعر طويل بخصلات بالياج وحركة طبيعية' },
+  'soins-cheveux': { src: '/media/service-soins.jpg', frAlt: 'Soin capillaire appliqué au bac de lavage dans un salon', arAlt: 'جلسة عناية بالشعر عند حوض الغسل في الصالون' },
+  massage: { src: '/media/service-spa.jpg', frAlt: 'Massage professionnel avec application d’huile', arAlt: 'جلسة تدليك احترافية مع استعمال الزيت' },
 };
 
 function useSiteCopy() {
@@ -244,7 +244,7 @@ function HomePage() {
           <div className="service-grid">
             {featuredServices.map((service) => (
               <article className="service-card" key={service.id}>
-                <img className="service-card__image" src={serviceCardMedia[service.id].src} alt={serviceCardMedia[service.id].alt} loading="lazy" width="1200" height="700" />
+                <img className="service-card__image" src={serviceCardMedia[service.id].src} alt={locale === 'ar' ? serviceCardMedia[service.id].arAlt : serviceCardMedia[service.id].frAlt} loading="lazy" width="1200" height="700" />
                 <div className="service-body">
                   <span className="pill">{copy.services[service.id].category}</span>
                   <ul className="service-list" aria-label={copy.services[service.id].category}>
