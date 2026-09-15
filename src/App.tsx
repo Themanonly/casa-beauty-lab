@@ -35,6 +35,12 @@ const heroScenes = [
 ];
 type LocaleSelect = Dispatch<Locale>;
 
+const serviceCardMedia: Record<string, { src: string; alt: string }> = {
+  coiffure: { src: '/media/lab/coiffure/coiffure-signature.png', alt: 'Résultat coiffure signature chez Casa Beauty Lab' },
+  'soins-cheveux': { src: '/media/lab/lissage/lissage-soin.jpg', alt: 'Espace de soin capillaire chez Casa Beauty Lab' },
+  massage: { src: '/media/lab/hammam/hammam-ritual.png', alt: 'Rituel de massage et bien-être chez Casa Beauty Lab' },
+};
+
 function useSiteCopy() {
   return translations[getLocale(useLocation().pathname)];
 }
@@ -59,7 +65,7 @@ function LanguageSelector({ locale, copy, onSelect }: { locale: Locale; copy: ty
     const currentIndex = optionRefs.current.findIndex((option) => option === document.activeElement);
     if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
       event.preventDefault();
-      const nextIndex = event.key === 'ArrowDown' ? (currentIndex + 1) % 2 : (currentIndex + 1) % 2;
+      const nextIndex = event.key === 'ArrowDown' ? (currentIndex + 1) % 2 : (currentIndex - 1 + 2) % 2;
       optionRefs.current[nextIndex]?.focus();
     }
     if (event.key === 'Home' || event.key === 'End') {
@@ -73,8 +79,8 @@ function LanguageSelector({ locale, copy, onSelect }: { locale: Locale; copy: ty
         {locale === 'fr' ? 'FR' : 'AR'} <span aria-hidden="true" className="language-chevron" />
       </button>
       {open && <div className="language-menu" ref={menuRef} role="menu" onKeyDown={handleMenuKeyDown}>
-        <button ref={(element) => { optionRefs.current[0] = element; }} className={locale === 'fr' ? 'language-option language-option--active' : 'language-option'} type="button" role="menuitem" aria-current={locale === 'fr' ? 'true' : undefined} onClick={() => { onSelect('fr'); setOpen(false); }}><span className="language-option__code">FR</span><span>Français</span>{locale === 'fr' && <span className="language-option__mark" aria-hidden="true">—</span>}</button>
-        <button ref={(element) => { optionRefs.current[1] = element; }} className={locale === 'ar' ? 'language-option language-option--active' : 'language-option'} type="button" role="menuitem" aria-current={locale === 'ar' ? 'true' : undefined} onClick={() => { onSelect('ar'); setOpen(false); }}><span className="language-option__code">AR</span><span>العربية</span>{locale === 'ar' && <span className="language-option__mark" aria-hidden="true">—</span>}</button>
+        <button ref={(element) => { optionRefs.current[0] = element; }} className={locale === 'fr' ? 'language-option language-option--active' : 'language-option'} type="button" role="menuitem" aria-current={locale === 'fr' ? 'true' : undefined} onClick={() => { onSelect('fr'); setOpen(false); }}><span className="language-option__code">FR</span><span>Français</span>{locale === 'fr' && <span className="language-option__mark" aria-hidden="true" />}</button>
+        <button ref={(element) => { optionRefs.current[1] = element; }} className={locale === 'ar' ? 'language-option language-option--active' : 'language-option'} type="button" role="menuitem" aria-current={locale === 'ar' ? 'true' : undefined} onClick={() => { onSelect('ar'); setOpen(false); }}><span className="language-option__code">AR</span><span>العربية</span>{locale === 'ar' && <span className="language-option__mark" aria-hidden="true" />}</button>
       </div>}
     </div>
   );
@@ -238,12 +244,12 @@ function HomePage() {
           <div className="service-grid">
             {featuredServices.map((service) => (
               <article className="service-card" key={service.id}>
+                <img className="service-card__image" src={serviceCardMedia[service.id].src} alt={serviceCardMedia[service.id].alt} loading="lazy" width="1200" height="700" />
                 <div className="service-body">
                   <span className="pill">{copy.services[service.id].category}</span>
                   <ul className="service-list" aria-label={copy.services[service.id].category}>
                     {copy.services[service.id].tariffNames.map((name) => <li key={name}>{name}</li>)}
                   </ul>
-                  <p>{copy.services[service.id].shortDescription}</p>
                   <div className="service-meta">
                     <span className="service-price-full">{getPriceLabel(locale, service.id, service.priceLabel) ?? copy.common.onRequest}</span>
                     <span className="service-price-start">{getStartingPriceLabel(locale, service.id) ?? copy.common.pricesLink}</span>

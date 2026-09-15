@@ -82,7 +82,7 @@ button, input, textarea, select { font: inherit; }
 .language-option:hover, .language-option:focus-visible { background: var(--bg); color: var(--ink); }
 .language-option--active { color: var(--ink); font-weight: 600; }
 .language-option__code { color: var(--muted); font-size: 0.68rem; letter-spacing: 0.12em; }
-.language-option__mark { color: var(--muted); font-size: 0.8rem; }
+.language-option__mark { width: 0.65rem; height: 0.35rem; border-inline-start: 1.5px solid var(--ink); border-block-end: 1.5px solid var(--ink); transform: rotate(-45deg) translateY(-2px); }
 @keyframes language-menu-in { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 .button {
   display: inline-flex;
@@ -211,8 +211,9 @@ h3 { font-size: 1.45rem; }
 }
 .service-card__image {
   width: 100%;
-  min-height: 150px;
-  background: #ded8d2;
+  height: 150px;
+  object-fit: cover;
+  object-position: center;
   border-bottom: 1px solid var(--line);
 }
 .service-body {
@@ -238,7 +239,7 @@ h3 { font-size: 1.45rem; }
 .service-meta span { font-weight: 600; }
 .service-price-start { display: inline; color: var(--muted); font-size: 0.82rem; font-weight: 400 !important; }
 .service-duration { font-weight: 400 !important; }
-.service-list { display: flex; flex-wrap: wrap; gap: 0.35rem 0.8rem; list-style: none; padding: 0; margin: 1.15rem 0 0.8rem; color: var(--ink); font-size: 0.95rem; }
+.service-list { display: flex; flex-wrap: wrap; gap: 0.35rem 0.8rem; list-style: none; padding: 0; margin: 1.15rem 0 0.8rem; color: var(--ink); font-size: 1.05rem; line-height: 1.5; }
 .service-list li { position: relative; }
 .service-list li:not(:last-child)::after { content: '·'; position: absolute; inset-inline-end: -0.52rem; color: var(--muted); }
 .service-body > p { margin: 0; color: var(--muted); }
@@ -559,6 +560,7 @@ h3 { font-size: 1.45rem; }
   .stat-box { align-items: flex-start; padding: 1.25rem 1rem; text-align: start; }
   .stat-box__label { max-width: none; color: var(--muted); text-transform: none; letter-spacing: 0; font-size: 0.95rem; line-height: 1.6; }
   .service-list { margin-top: 1rem; font-size: 0.92rem; line-height: 1.5; }
+  .service-card__image { height: 132px; }
   .service-meta { gap: 0.5rem; }
   .service-meta span { font-size: 0.98rem; }
   .service-meta a { margin-top: 0.15rem; }
