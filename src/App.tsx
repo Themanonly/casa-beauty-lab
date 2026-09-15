@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type Dispatch } from 'react';
 import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { business } from './content/business';
-import { getDurationLabel, getLocale, getPriceLabel, localePath, translations, type Locale } from './i18n';
+import { getDurationLabel, getLocale, getPriceLabel, getStartingPriceLabel, localePath, translations, type Locale } from './i18n';
 
 const featuredServices = business.services.filter((service) => service.featured);
 
@@ -223,11 +223,11 @@ function HomePage() {
               <article className="service-card" key={service.id}>
                 <div className="service-body">
                   <span className="pill">{copy.services[service.id].category}</span>
-                  <h3>{copy.services[service.id].title}</h3>
                   <p>{copy.services[service.id].shortDescription}</p>
                   <div className="service-meta">
-                    <span>{getPriceLabel(locale, service.id, service.priceLabel) ?? copy.common.onRequest}</span>
-                    <span>{getDurationLabel(locale, service.id, service.duration) ?? copy.common.quote}</span>
+                    <span className="service-price-full">{getPriceLabel(locale, service.id, service.priceLabel) ?? copy.common.onRequest}</span>
+                    <span className="service-price-start">{getStartingPriceLabel(locale, service.id) ?? copy.common.pricesLink}</span>
+                    <span className="service-duration">{getDurationLabel(locale, service.id, service.duration) ?? copy.common.quote}</span>
                     <Link to={localePath(locale, '/tarifs')}>{copy.common.pricesLink}</Link>
                   </div>
                 </div>

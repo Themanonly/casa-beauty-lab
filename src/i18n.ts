@@ -78,6 +78,15 @@ export const getPriceLabel = (locale: Locale, serviceId: string, fallback: strin
   massage: 'تدليك استرخائي 45 دقيقة 300 درهم · منشط ساعة 400 درهم · العميق / الرياضي: السعر عند الطلب · تدليك الرأس: السعر عند الطلب',
   hammam: 'شرقي 45 دقيقة 150 درهم · رويال ساعة 190 درهم · سيغنتشر ساعة 250 درهم · للأطفال 30 دقيقة 90 درهماً'
 }[serviceId] ?? 'السعر عند الطلب') : fallback;
+export const getStartingPriceLabel = (locale: Locale, serviceId: string) => locale === 'ar' ? ({
+  coiffure: 'ابتداءً من 70 درهماً',
+  'soins-cheveux': 'ابتداءً من 250 درهم',
+  massage: 'ابتداءً من 300 درهم',
+}[serviceId] ?? null) : ({
+  coiffure: 'Dès 70 DH',
+  'soins-cheveux': 'Dès 250 DH',
+  massage: 'Dès 300 DH',
+}[serviceId] ?? null);
 export const getDurationLabel = (locale: Locale, serviceId: string, fallback: string | undefined) => locale === 'ar' ? ({
   coiffure: 'حسب الطول',
   'soins-cheveux': '45–90 دقيقة',
